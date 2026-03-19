@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -19,9 +19,9 @@ export class CreateOffer {
   private readonly wizardState = inject(WizardState);
   private readonly router = inject(Router);
 
-  offerPayload = '';
-  loading = false;
-  errorMessage = '';
+  readonly offerPayload = signal('');
+  readonly loading = signal(false);
+  readonly errorMessage = signal('');
 
   ngOnInit(): void {
     if (this.wizardState.snapshot.role !== 'caller') {
@@ -30,26 +30,29 @@ export class CreateOffer {
   }
 
   async createOfferQr(): Promise<void> {
-    this.loading = true;
-    this.errorMessage = '';
+    this.loading.set(true);
+    this.errorMessage.set('');
 
     try {
       const sessionId = this.wizardState.ensureSessionId();
       const offerSdp = await this.webrtc.createOffer();
       this.wizardState.setOfferSdp(offerSdp);
 
-      this.offerPayload = this.codec.encodeToQrPayload({
+      const payload = this.codec.encodeToQrPayload({
         version: 1,
         sessionId,
         type: 'offer',
         sdp: offerSdp,
         createdAt: Date.now(),
       });
+
+      this.offerPayload.set(payload)
     } catch (error) {
-      this.errorMessage = `Could not create offer: ${String(error)}`;
+      this.errorMessage.set(`Could not create offer: ${String(error)}`);
     } finally {
-      this.loading = false;
+      this.loading.set(false);
     }
+    console.log('DEBUG6');
   }
 
   async goToScanAnswer(): Promise<void> {

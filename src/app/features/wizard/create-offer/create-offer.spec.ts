@@ -45,8 +45,8 @@ describe('CreateOffer', () => {
 
     expect(webrtcMock.createOffer).toHaveBeenCalledTimes(1);
     expect(codecMock.encodeToQrPayload).toHaveBeenCalledTimes(1);
-    expect(component.offerPayload).toBe('encoded-offer');
-    expect(component.errorMessage).toBe('');
+    expect(component.offerPayload()).toBe('encoded-offer');
+    expect(component.errorMessage()).toBe('');
   });
 
   it('navigates to scan-answer', async () => {

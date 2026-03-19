@@ -30,14 +30,20 @@ describe('ScanOffer', () => {
     navigateByUrl: vi.fn().mockResolvedValue(true),
   };
 
+  const wizardStateMock = {
+    startAsCallee: vi.fn(),
+    setOfferSdp: vi.fn(),
+    setAnswerSdp: vi.fn(),
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ScanOffer],
       providers: [
-        WizardState,
         { provide: SignalingCodec, useValue: codecMock },
         { provide: Webrtc, useValue: webrtcMock },
         { provide: Router, useValue: routerMock },
+        { provide: WizardState, useValue: wizardStateMock },
       ],
     }).compileComponents();
 
@@ -52,7 +58,7 @@ describe('ScanOffer', () => {
     expect(codecMock.decodeFromQrPayload).toHaveBeenCalledWith('raw-offer');
     expect(webrtcMock.acceptOfferAndCreateAnswer).toHaveBeenCalledWith('offer-sdp');
     expect(codecMock.encodeToQrPayload).toHaveBeenCalledTimes(1);
-    expect(component.answerPayload).toBe('encoded-answer');
+    expect(component.answerPayload()).toBe('encoded-answer');
   });
 
   it('navigates to call', async () => {

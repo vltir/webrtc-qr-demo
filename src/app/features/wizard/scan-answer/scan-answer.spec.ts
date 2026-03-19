@@ -10,7 +10,6 @@ import { WizardState } from '../../../core/wizard-state';
 describe('ScanAnswer', () => {
   let component: ScanAnswer;
   let fixture: ComponentFixture<ScanAnswer>;
-  let wizardState: WizardState;
 
   const codecMock = {
     decodeFromQrPayload: vi.fn().mockReturnValue({
@@ -30,27 +29,21 @@ describe('ScanAnswer', () => {
     navigateByUrl: vi.fn().mockResolvedValue(true),
   };
 
+  const wizardStateMock = {
+    snapshot: { sessionId: 'session-123' },
+    setAnswerSdp: vi.fn(),
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ScanAnswer],
       providers: [
-        WizardState,
         { provide: SignalingCodec, useValue: codecMock },
         { provide: Webrtc, useValue: webrtcMock },
         { provide: Router, useValue: routerMock },
+        { provide: WizardState, useValue: wizardStateMock },
       ],
     }).compileComponents();
-
-    wizardState = TestBed.inject(WizardState);
-    wizardState.startAsCaller();
-    // keep deterministic for this test
-    (wizardState as { setOfferSdp: (value: string) => void }).setOfferSdp('offer-sdp');
-    (wizardState as { ensureSessionId: () => string }).ensureSessionId();
-
-    // override session id to match mock payload
-    (wizardState as { startAsCallee: (sessionId: string) => void }).startAsCallee('session-123');
-    wizardState.startAsCaller();
-    (wizardState as { startAsCallee: (sessionId: string) => void }).startAsCallee('session-123');
 
     fixture = TestBed.createComponent(ScanAnswer);
     component = fixture.componentInstance;
@@ -61,7 +54,8 @@ describe('ScanAnswer', () => {
     await component.onPayloadScanned('raw-answer');
 
     expect(webrtcMock.applyAnswer).toHaveBeenCalledWith('answer-sdp');
+    expect(wizardStateMock.setAnswerSdp).toHaveBeenCalledWith('answer-sdp');
     expect(routerMock.navigateByUrl).toHaveBeenCalledWith('/call');
-    expect(component.errorMessage).toBe('');
+    expect(component.errorMessage()).toBe('');
   });
 });

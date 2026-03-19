@@ -3,5 +3,5 @@
 
 <app-qr-scanner (payloadScanned)="onPayloadScanned($event)"></app-qr-scanner>
 
-<p *ngIf="loading">Applying answer...</p>
-<p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+<p *ngIf="loading()">Applying answer...</p>
+<p *ngIf="errorMessage()" class="error">{{ errorMessage() }}</p>

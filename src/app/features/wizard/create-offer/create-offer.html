@@ -1,14 +1,14 @@
 <h1>Create offer</h1>
 <p>Generate an offer, then let the other user scan this QR code.</p>
 
-<button type="button" (click)="createOfferQr()" [disabled]="loading">
-  {{ loading ? 'Generating...' : 'Generate offer QR' }}
+<button type="button" (click)="createOfferQr()" [disabled]="loading()">
+  {{ loading() ? 'Generating...' : 'Generate offer QR' }}
 </button>
 
-<p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+<p *ngIf="errorMessage()" class="error">{{ errorMessage() }}</p>
 
-<app-qr-display [payload]="offerPayload"></app-qr-display>
+<app-qr-display [payload]="offerPayload()"></app-qr-display>
 
-<button type="button" (click)="goToScanAnswer()" [disabled]="!offerPayload">
+<button type="button" (click)="goToScanAnswer()" [disabled]="!offerPayload()">
   I shared it, continue to scan answer
 </button>

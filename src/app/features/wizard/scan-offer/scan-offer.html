@@ -3,11 +3,11 @@
 
 <app-qr-scanner (payloadScanned)="onPayloadScanned($event)"></app-qr-scanner>
 
-<p *ngIf="loading">Processing offer...</p>
-<p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+<p *ngIf="loading()">Processing offer...</p>
+<p *ngIf="errorMessage()" class="error">{{ errorMessage() }}</p>
 
-<app-qr-display [payload]="answerPayload"></app-qr-display>
+<app-qr-display [payload]="answerPayload()"></app-qr-display>
 
-<button type="button" (click)="goToCall()" [disabled]="!answerPayload">
+<button type="button" (click)="goToCall()" [disabled]="!answerPayload()">
   I shared the answer, go to call
 </button>

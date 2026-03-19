@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -21,13 +21,13 @@ export class ScanOffer {
   private readonly wizardState = inject(WizardState);
   private readonly router = inject(Router);
 
-  answerPayload = '';
-  loading = false;
-  errorMessage = '';
+  readonly answerPayload = signal('');
+  readonly loading = signal(false);
+  readonly errorMessage = signal('');
 
   async onPayloadScanned(payload: string): Promise<void> {
-    this.loading = true;
-    this.errorMessage = '';
+    this.loading.set(true);
+    this.errorMessage.set('');
 
     try {
       const message = this.codec.decodeFromQrPayload(payload);
@@ -42,17 +42,19 @@ export class ScanOffer {
       const answerSdp = await this.webrtc.acceptOfferAndCreateAnswer(message.sdp);
       this.wizardState.setAnswerSdp(answerSdp);
 
-      this.answerPayload = this.codec.encodeToQrPayload({
+      const encoded = this.codec.encodeToQrPayload({
         version: 1,
         sessionId: message.sessionId,
         type: 'answer',
         sdp: answerSdp,
         createdAt: Date.now(),
       });
+
+      this.answerPayload.set(encoded);
     } catch (error) {
-      this.errorMessage = `Could not process offer: ${String(error)}`;
+      this.errorMessage.set(`Could not process offer: ${String(error)}`);
     } finally {
-      this.loading = false;
+      this.loading.set(false);
     }
   }
 

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -20,12 +20,12 @@ export class ScanAnswer {
   private readonly wizardState = inject(WizardState);
   private readonly router = inject(Router);
 
-  loading = false;
-  errorMessage = '';
+  readonly loading = signal(false);
+  readonly errorMessage = signal('');
 
   async onPayloadScanned(payload: string): Promise<void> {
-    this.loading = true;
-    this.errorMessage = '';
+    this.loading.set(true);
+    this.errorMessage.set('');
 
     try {
       const message = this.codec.decodeFromQrPayload(payload);
@@ -44,9 +44,9 @@ export class ScanAnswer {
 
       await this.router.navigateByUrl('/call');
     } catch (error) {
-      this.errorMessage = `Could not apply answer: ${String(error)}`;
+      this.errorMessage.set(`Could not apply answer: ${String(error)}`);
     } finally {
-      this.loading = false;
+      this.loading.set(false);
     }
   }
 }

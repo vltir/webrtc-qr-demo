@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, signal } from '@angular/core';
 import { NgIf } from '@angular/common';
 import * as QRCode from 'qrcode';
 
@@ -8,37 +8,35 @@ import * as QRCode from 'qrcode';
   templateUrl: './qr-display.html',
   styleUrl: './qr-display.css',
 })
-export class QrDisplay implements OnChanges {
-  @Input() payload = '';
+export class QrDisplay {
+  readonly qrDataUrl = signal<string | null>(null);
+  readonly errorMessage = signal('');
 
-  qrDataUrl: string | null = null;
-  errorMessage = '';
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if ('payload' in changes) {
-      void this.renderQr();
-    }
+  @Input()
+  set payload(value: string) {
+    void this.renderQr(value ?? '');
   }
 
-  private async renderQr(): Promise<void> {
-    const value = this.payload.trim();
+  private async renderQr(payload: string): Promise<void> {
+    const value = payload.trim();
 
     if (!value) {
-      this.qrDataUrl = null;
-      this.errorMessage = '';
+      this.qrDataUrl.set(null);
+      this.errorMessage.set('');
       return;
     }
 
     try {
-      this.qrDataUrl = await QRCode.toDataURL(value, {
+      const dataUrl = await QRCode.toDataURL(value, {
         errorCorrectionLevel: 'M',
         margin: 1,
         scale: 6,
       });
-      this.errorMessage = '';
+      this.qrDataUrl.set(dataUrl);
+      this.errorMessage.set('');
     } catch (error) {
-      this.qrDataUrl = null;
-      this.errorMessage = `Failed to render QR code: ${String(error)}`;
+      this.qrDataUrl.set(null);
+      this.errorMessage.set(`Failed to render QR code: ${String(error)}`);
     }
   }
 }
