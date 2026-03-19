@@ -16,7 +16,21 @@ describe('QrScanner', () => {
     await fixture.whenStable();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('emits payload when manual input is valid', () => {
+    const emitSpy = vi.spyOn(component.payloadScanned, 'emit');
+    component.manualPayload = 'abc123';
+
+    component.submitManualPayload();
+
+    expect(emitSpy).toHaveBeenCalledWith('abc123');
+    expect(component.errorMessage).toBe('');
+  });
+
+  it('sets error for empty payload', () => {
+    component.manualPayload = '   ';
+
+    component.submitManualPayload();
+
+    expect(component.errorMessage).toContain('Please paste');
   });
 });

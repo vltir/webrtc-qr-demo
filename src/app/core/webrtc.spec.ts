@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Webrtc } from './webrtc';
 
 class FakePeerConnection extends EventTarget {
-  localDescription: RTCSessionDescriptionInit | null = null;
+  localDescription: RTCLocalSessionDescriptionInit | null = null;
   remoteDescription: RTCSessionDescriptionInit | null = null;
   iceGatheringState: RTCIceGatheringState = 'complete';
   connectionState: RTCPeerConnectionState = 'new';

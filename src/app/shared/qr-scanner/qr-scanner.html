@@ -1,1 +1,8 @@
-<p>qr-scanner works!</p>
+<div class="qr-scanner">
+  <label for="payload">Scanned payload (paste for now):</label>
+  <textarea id="payload" [(ngModel)]="manualPayload" rows="6"></textarea>
+
+  <button type="button" (click)="submitManualPayload()">Use payload</button>
+
+  <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+</div>

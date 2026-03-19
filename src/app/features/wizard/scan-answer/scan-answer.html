@@ -1,1 +1,7 @@
-<p>scan-answer works!</p>
+<h1>Scan answer</h1>
+<p>Scan the callee's answer to finish signaling and join the call.</p>
+
+<app-qr-scanner (payloadScanned)="onPayloadScanned($event)"></app-qr-scanner>
+
+<p *ngIf="loading">Applying answer...</p>
+<p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>

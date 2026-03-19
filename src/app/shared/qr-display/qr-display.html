@@ -1,1 +1,5 @@
-<p>qr-display works!</p>
+<div class="qr-display">
+  <img *ngIf="qrDataUrl" [src]="qrDataUrl" alt="Signaling QR code" />
+  <p *ngIf="!qrDataUrl && !errorMessage">QR code will appear here.</p>
+  <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+</div>

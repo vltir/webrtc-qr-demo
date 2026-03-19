@@ -1,1 +1,11 @@
-<p>call-room works!</p>
+<h1>Call room</h1>
+
+<p>Connection state: {{ connectionState$ | async }}</p>
+<p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+
+<div class="videos">
+  <video #localVideo autoplay muted playsinline></video>
+  <video #remoteVideo autoplay playsinline></video>
+</div>
+
+<button type="button" (click)="endCall()">End call</button>

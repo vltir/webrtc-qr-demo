@@ -12,7 +12,7 @@ export class Webrtc {
   private localVideoElement: HTMLVideoElement | null = null;
   private remoteVideoElement: HTMLVideoElement | null = null;
 
-  private readonly connectionStateSubject = new BehaviorSubject<RTCPeerConnection>('new');
+  private readonly connectionStateSubject = new BehaviorSubject<RTCPeerConnectionState>('new');
   readonly connectionState$ = this.connectionStateSubject.asObservable();
 
   private readonly rtcConfig: RTCConfiguration = {
@@ -38,10 +38,9 @@ export class Webrtc {
     }
   }
 
-  async ensureLocalMedia(constraints: MediaStreamConstraints = {
-    video: true,
-    audio: true
-  }): Promise<MediaStream> {
+  async ensureLocalMedia(
+    constraints: MediaStreamConstraints = { video: true, audio: true }
+  ): Promise<MediaStream> {
     if(this.localStream) {
       return this.localStream;
     }
@@ -50,7 +49,7 @@ export class Webrtc {
       throw new Error('getUserMedia is not available in this browser/context');
     }
 
-    this.localStream = await navigator.mediaDevices.getUserMedia(constriants);
+    this.localStream = await navigator.mediaDevices.getUserMedia(constraints);
 
     if (this.localVideoElement) {
       this.localVideoElement.srcObject = this.localStream;

@@ -1,1 +1,13 @@
-<p>scan-offer works!</p>
+<h1>Scan offer</h1>
+<p>Scan the caller's offer and create an answer QR code.</p>
+
+<app-qr-scanner (payloadScanned)="onPayloadScanned($event)"></app-qr-scanner>
+
+<p *ngIf="loading">Processing offer...</p>
+<p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+
+<app-qr-display [payload]="answerPayload"></app-qr-display>
+
+<button type="button" (click)="goToCall()" [disabled]="!answerPayload">
+  I shared the answer, go to call
+</button>
