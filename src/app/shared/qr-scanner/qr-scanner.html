@@ -1,8 +1,56 @@
 <div class="qr-scanner">
-  <label for="payload">Scanned payload (paste for now):</label>
-  <textarea id="payload" [(ngModel)]="manualPayload" rows="6"></textarea>
+  <div class="scanner-controls">
+    <button
+      type="button"
+      *ngIf="!isScanning()"
+      (click)="startScanning()"
+      class="primary-button"
+    >
+      Start Camera
+    </button>
 
-  <button type="button" (click)="submitManualPayload()">Use payload</button>
+    <button
+      type="button"
+      *ngIf="isScanning()"
+      (click)="stopScanning()"
+      class="secondary-button"
+    >
+      Stop Camera
+    </button>
 
-  <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+    <button
+      type="button"
+      (click)="toggleManualInput()"
+      class="secondary-button"
+    >
+      {{ showManualInput() ? 'Hide Manual Input' : 'Enter Manually' }}
+    </button>
+  </div>
+
+  <div *ngIf="isScanning()" class="camera-section">
+    <video #videoElement class="video-preview"></video>
+
+    <div *ngIf="availableDevices().length > 1" class="device-selector">
+      <label for="camera-select">Camera:</label>
+      <select
+        id="camera-select"
+        [value]="selectedDeviceId()"
+        (change)="onDeviceChange($any($event.target).value)"
+      >
+        <option *ngFor="let device of availableDevices()" [value]="device.deviceId">
+          {{ device.label || 'Camera ' + device.deviceId.substring(0, 8) }}
+        </option>
+      </select>
+    </div>
+
+    <p class="scanning-hint">Position the QR code in front of the camera</p>
+  </div>
+
+  <div *ngIf="showManualInput()" class="manual-input-section">
+    <label for="payload">Paste payload manually:</label>
+    <textarea id="payload" [(ngModel)]="manualPayload" rows="6"></textarea>
+    <button type="button" (click)="submitManualPayload()">Use payload</button>
+  </div>
+
+  <p *ngIf="errorMessage()" class="error">{{ errorMessage() }}</p>
 </div>
